@@ -31,8 +31,7 @@
                 e.preventDefault();
                 
                 $name = $("[name=name]").val();
-                
-                
+                        
                 $.ajax({
                     method: "POST",
                     url: "saveToDB.php",
@@ -43,38 +42,46 @@
                             alert("You name has been saved to db");
                         
                     },
-                     error: function(statusCode, errorThrown) {
-                            if (statusCode.status == 0) {
-                                
-                                var $array =  localStorage.getItem('Names');
-                                var $names;
-                                
-                                if($array){
-                                    $names = JSON.parse($array);
-                                }
-                                else{
-                                    $names = new Array();
-                                }
-                                
-                                
-                                $names.push($name);
-                                
-                                var jsonString = JSON.stringify($names);
-                                localStorage.setItem('Names', jsonString);
-                                
-                                
-                                alert("you're offline we have saved to local storage instead");
+                    error: function(statusCode, errorThrown) {
+                            if (statusCode.status == 0) {                                
+                                //Okay no internet/network lets save so localStorage
+                                saveToLocalStorage($name);           
                             }
                     }
   
                 })
+                                  
+            })  
+            
+            function saveToLocalStorage(name){
+                var $names;
+            
+                //Lets try to get the items in the local storage 
+                var $array =  localStorage.getItem('Names');
+                
+                //parse if items exist
+                if($array) 
+                    $names = JSON.parse($array);
+                
+                //create new array 
+                else
+                    $names = new Array();
                 
                 
+                //Lets append the name into the array
+                $names.push(name);
                 
+                //Lets json encode it 
+                var jsonString = JSON.stringify($names);
                 
+                //now lets save/re-save it again
+                localStorage.setItem('Names', jsonString);
                 
-                
-            })            
+                // notify user
+                alert("you're offline we have saved to local storage instead");
+                                
+            }
+                                          
             
         </script>
         
